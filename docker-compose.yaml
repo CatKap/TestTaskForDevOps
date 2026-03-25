@@ -1,0 +1,118 @@
+services:
+  back:
+    container_name: task-app
+    build: ./api/
+    environment:
+      PGUSER: ${USER} 
+      PGDATABASE: ${DB_NAME} 
+      PGPASSWORD: ${DB_PASSWORD} 
+      PORT: 3000
+      PGPORT: 5432 
+      PGHOST: db 
+    
+
+    networks:
+      - back-net
+
+    # База должна подняться первая, уже потом бэк
+    depends_on:
+         db:
+            condition: service_healthy
+
+    # Добавил health эндпоинт 
+    # Чтобы не тащить зависимости
+    # health делаем через nodу
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health', res => process.exit(res.statusCode===200?0:1)).on('error', () => process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 3 
+      start_period: 10s
+
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+
+  db:   
+   image: postgres:16
+   restart: unless-stopped
+   container_name: task-db
+   # Только если хотим доступ с локалхоста на базу 
+   # (или прокинуть DNAT в сеть)
+   #ports:
+   #  - 5432:5432
+   environment:
+     POSTGRES_USER: ${USER} 
+     POSTGRES_PASSWORD: ${DB_PASSWORD} 
+     POSTGRES_DB: ${DB_NAME}
+
+   networks:
+     - back-net
+
+   volumes:
+     - pgdata:/var/lib/postgresql/data/
+     # Можно вкинуть стартовые миграции
+     #- ${MIGRATIONS_DIR}:/docker-entrypoint-initdb.d/
+     
+
+   healthcheck:
+     test: ["CMD-SHELL", "pg_isready -U ${USER} -d ${DB_NAME}"]
+     interval: 10s
+     timeout: 5s
+     retries: 5
+     start_period: 10s
+
+   deploy:
+     resources:
+       limits:
+         cpus: "0.5"
+         memory: 1G 
+
+  front:
+    container_name: task-front 
+    build: ./front/
+    ports: 
+      - "${APP_PORT}:80"
+    # Поднимаю приложение ещё за одним proxy, поэтому ssl ни к чему
+    #  - "${APP_SSL_PORT}:443"
+    #
+    environment:
+      # Можно подтягивать из энвов, но 
+      # это уже overconfig
+      BACK_PORT: 3000
+
+    # Фронт стартует после бэка чтобы compose 
+    # DNS resolver успел добавить его 
+    depends_on:
+         back:
+            condition: service_healthy
+
+    networks:
+      - back-net
+      - front-net
+
+    healthcheck:
+      test: ["CMD", "curl", "f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5 
+      start_period: 10s
+
+    deploy:
+      resources:
+        limits:
+          cpus: "0.24"
+          memory: 128M 
+
+
+networks:
+  back-net:
+  front-net:
+
+volumes:
+  pgdata: 
+
+
+

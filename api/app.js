@@ -14,6 +14,12 @@ const pool = new Pool({
 });
 
 
+// Добавим health endpoint
+app.get('/health', async (req, res) => {
+  
+  res.status(200).json({'status':'Ok'});
+});
+
 app.get('/api/time', async (req, res) => {
     try {
         const result = await pool.query('SELECT NOW()');
