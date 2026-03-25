@@ -65,9 +65,8 @@ docker-compose up # Или sudo docker-compose up
 
 ## CI (Continuous Integration)
 
-* Использовать **GitHub Actions** или **Gitea Actions**.
 * При каждом коммите:
-  * Собрать Docker-образы для фронтенда и бэкенда (необходима поддержка архитектур `amd64` и `arm64`).
+  * Собираются Docker-образы для фронтенда и бэкенда (в `amd64` и `arm64`).
   * Опубликовать их в **[ghcr.io](https://ghcr.io)**.
   * Отправить уведомление в **Telegram/Discord** о результате сборки.
 

@@ -27,7 +27,14 @@ jobs:
       
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-
+        
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: ./api/
+          platforms: linux/arm64
+          push: true
+          tags: ghcr.io/${{ env.NAMESPACE }}/tapi:arm64-...
 
       - name: Run arm push 
         run: docker buildx build --platform linux/arm64 ./api/ -t ghcr.io/$NAMESPACE/tapi:arm64${{ github.sha }} --push
@@ -35,4 +42,11 @@ jobs:
 
       - run: docker push ghcr.io/$NAMESPACE/tapi:x86_64${{ github.sha }}
       - run: docker push ghcr.io/$NAMESPACE/front:x86_64${{ github.sha }}
+
+      - name: Send telegram notification
+        run: |
+    curl -X POST "https://api.telegram.org/bot${{ secrets.BOT_TOKEN }}/sendMessage" \
+      -d chat_id=${{ secrets.CHAT_ID }} \
+      -d text="✅ *Deploy успешно выполнен!*" \
+      -d parse_mode=Markdown
 
