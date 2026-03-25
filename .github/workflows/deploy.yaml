@@ -11,11 +11,19 @@ jobs:
   Explore-GitHub-Actions:
     runs-on: self-hosted
     steps:
-      - run: echo "${{ secrets.CR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-      - run: docker build ./api/  -t tapi:x86_64${{ github.sha }}
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Login docker
+        run: echo "${{ secrets.CR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Run x86 build
+        run: docker build ./api/  -t tapi:x86_64${{ github.sha }}
       - run: docker build ./front/  -t front:x86_64${{ github.sha }}
 
-      - run: docker buildx build --platform linux/arm64 ./api/ -t tapi:arm64${{ github.sha }}
+      - name: Run arm build
+        run: docker buildx build --platform linux/arm64 ./api/ -t tapi:arm64${{ github.sha }}
       - run: docker buildx build --platform linux/arm64 ./front/  -t front:arm64${{ github.sha }}
 
       - run: docker push ghcr.io/$NAMESPACE/tapi:x86_64${{ github.sha }}
