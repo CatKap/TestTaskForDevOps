@@ -22,6 +22,13 @@ jobs:
         run: docker build ./api/  -t tapi:x86_64${{ github.sha }}
       - run: docker build ./front/  -t front:x86_64${{ github.sha }}
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+
       - name: Run arm push 
         run: docker buildx build --platform linux/arm64 ./api/ -t ghcr.io/$NAMESPACE/tapi:arm64${{ github.sha }} --push
       - run: docker buildx build --platform linux/arm64 ./front/  -t ghcr.io/$NAMESPACE/front:arm64${{ github.sha }} --push
