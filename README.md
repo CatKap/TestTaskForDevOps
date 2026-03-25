@@ -70,10 +70,19 @@ docker-compose up # Или sudo docker-compose up
   * Публикуются в **[ghcr.io](https://ghcr.io)**.
   * Отправляет уведомление в **Telegram/Discord** о результате сборки (TG_BOT_ID и CHAT_ID указываются в secrets)
 
+Пример уведомления (можно больше полезных данных засунуть, вроде branch, commit, кто, куда, etc.)
+![](./tg.png)
+
 ## CD (Continuous Deployment)
 
-Реализовывать необязательно, но будет плюсом.
-Если не реализовано - описать как это должно работать.
+Best practise я считаю использование k3s или minicube для небольших проектов, в данном случае деплой бы выглядел как `helmchart` проекта (аналог `compose`) + canary deployment через argo и метрики. 
+```bash
+kubectl --kubeconfig "$KUBECONFIG" -n dev set image deployment/$SERVICE_NAME $SERVICE_NAME=$IMAGE --record
+
+```
+Поэтому в имени образа используется sha тэг, т. к. без него кубер не обновит deployment под под. 
+
+Так же можно было бы сделать GitHub runner непосредственно на ноде, с темплейтингом `docker-compose` файла, и переподтягиванием с `docker-compose down --remove-orphans && docker compose up`.
 
 ## Лицензия
 
