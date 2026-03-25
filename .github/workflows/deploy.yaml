@@ -45,8 +45,8 @@ jobs:
 
       - name: Send telegram notification
         run: |
-    curl -X POST "https://api.telegram.org/bot${{ secrets.BOT_TOKEN }}/sendMessage" \
-      -d chat_id=${{ secrets.CHAT_ID }} \
-      -d text="✅ *Deploy успешно выполнен!*" \
-      -d parse_mode=Markdown
+          curl -X POST "https://api.telegram.org/bot${{ secrets.BOT_TOKEN }}/sendMessage" \
+            -d chat_id=${{ secrets.CHAT_ID }} \
+            -d text="✅ *Deploy успешно выполнен!*" \
+            -d parse_mode=Markdown
 
