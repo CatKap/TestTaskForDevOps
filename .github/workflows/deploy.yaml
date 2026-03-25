@@ -9,7 +9,7 @@ env:
 jobs:
 
   Explore-GitHub-Actions:
-    runs-on: ubuntu:latest   
+    runs-on: dev-runner   
     steps:
       - run: echo $CR_PAT | docker login ghcr.io -u $USERNAME --password-stdin
       #- run: docker push ghcr.io/$NAMESPACE/IMAGE_NAME:latest
