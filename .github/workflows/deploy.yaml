@@ -6,6 +6,10 @@ on: [push]
 env:
   NAMESPACE: testtask
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
 
   Explore-GitHub-Actions:

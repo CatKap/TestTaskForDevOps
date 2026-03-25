@@ -67,8 +67,8 @@ docker-compose up # Или sudo docker-compose up
 
 * При каждом коммите:
   * Собираются Docker-образы для фронтенда и бэкенда (в `amd64` и `arm64`).
-  * Опубликовать их в **[ghcr.io](https://ghcr.io)**.
-  * Отправить уведомление в **Telegram/Discord** о результате сборки.
+  * Публикуются в **[ghcr.io](https://ghcr.io)**.
+  * Отправляет уведомление в **Telegram/Discord** о результате сборки (TG_BOT_ID и CHAT_ID указываются в secrets)
 
 ## CD (Continuous Deployment)
 
