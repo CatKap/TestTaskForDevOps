@@ -4,7 +4,7 @@ run-name: CI/CD for test DevOps task
 on: [push]
 
 env:
-  NAMESPACE: testtask
+  NAMESPACE: CatKap
 
 permissions:
   contents: read
