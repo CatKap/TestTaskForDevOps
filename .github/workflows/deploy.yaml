@@ -22,17 +22,13 @@ jobs:
       - name: Login docker
         run: echo "${{ secrets.CR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Run x86 build
-        run: docker build ./api/  -t tapi:x86_64${{ github.sha }}
-      - run: docker build ./front/  -t front:x86_64${{ github.sha }}
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         
-      - name: Build and push
+      - name: Build and push app
         uses: docker/build-push-action@v6
         with:
           context: ./api/
@@ -40,12 +36,14 @@ jobs:
           push: true
           tags: ghcr.io/${{ env.NAMESPACE }}/tapi:arm64-...
 
-      - name: Run arm push 
-        run: docker buildx build --platform linux/arm64 ./api/ -t ghcr.io/$NAMESPACE/tapi:arm64${{ github.sha }} --push
-      - run: docker buildx build --platform linux/arm64 ./front/  -t ghcr.io/$NAMESPACE/front:arm64${{ github.sha }} --push
 
-      - run: docker push ghcr.io/$NAMESPACE/tapi:x86_64${{ github.sha }}
-      - run: docker push ghcr.io/$NAMESPACE/front:x86_64${{ github.sha }}
+      - name: Build and push front
+        uses: docker/build-push-action@v6
+        with:
+          context: ./front/
+          platforms: linux/arm64
+          push: true
+          tags: ghcr.io/${{ env.NAMESPACE }}/tapi:arm64-...
 
       - name: Send telegram notification
         run: |
