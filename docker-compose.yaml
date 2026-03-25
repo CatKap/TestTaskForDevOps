@@ -36,7 +36,7 @@ services:
           memory: 512M
 
   db:   
-   image: postgres:16
+   image: postgres
    restart: unless-stopped
    container_name: task-db
    # Только если хотим доступ с локалхоста на базу 
@@ -52,7 +52,8 @@ services:
      - back-net
 
    volumes:
-     - pgdata:/var/lib/postgresql/data/
+
+     - pgdata:/var/lib/postgresql/
      # Можно вкинуть стартовые миграции
      #- ${MIGRATIONS_DIR}:/docker-entrypoint-initdb.d/
      

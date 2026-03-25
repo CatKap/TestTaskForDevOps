@@ -4,18 +4,19 @@
 
 ```
 Graphana => Prometheus + Telegraph
-         => Loki + Alloy
+        => Loki + Alloy
 ```
 
 Loki и Prometheus подсасываются grapana'ой.
 
-Логи скарпятся через alloy, передаются в Loki. Вот логи в grapan'e.
-![](./logi.png)
+Логи скарпятся через alloy, передаются в Loki.
+![logs](./logi.png)
 
-Собрал простенький dashboard по контейнерам.
 
-![](./dashboard.png)
+Настроил простенький dashboard в graphna.
 
+
+![logs](./dashboard.png)
 
 ## Запуск 
 
@@ -29,8 +30,4 @@ export DOCKER_GID=$(stat -c '%g' /var/run/docker.sock) # Или прописат
 docker compose up
 
 ```
-
-`telegraph` сконфигурирован для сбора метрик по docker, `alloy` собирает логи.
-
-
 

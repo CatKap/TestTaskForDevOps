@@ -1,0 +1,26 @@
+name: GitHub Actions Demo
+run-name: CI/CD for test DevOps task
+
+on: [push]
+
+env:
+  NAMESPACE: testtask
+
+jobs:
+
+  Explore-GitHub-Actions:
+    runs-on: docker:dind   
+    steps:
+      - run: echo $CR_PAT | docker login ghcr.io -u $USERNAME --password-stdin
+      #- run: docker push ghcr.io/$NAMESPACE/IMAGE_NAME:latest
+      - run: docker build ./api/  -t tapi:x86_64${{ github.sha }}
+      - run: docker build ./front/  -t front:x86_64${{ github.sha }}
+
+      - run: docker buildx build --platform linux/arm64 ./api/ -t tapi:arm64${{ github.sha }}
+      - run: docker buildx build --platform linux/arm64 ./front/  -t front:arm64${{ github.sha }}
+
+      - run: docker push ghcr.io/$NAMESPACE/tapi:x86_64${{ github.sha }}
+      - run: docker push ghcr.io/$NAMESPACE/front:x86_64${{ github.sha }}
+      - run: docker push ghcr.io/$NAMESPACE/tapi:arm64${{ github.sha }}
+      - run: docker push ghcr.io/$NAMESPACE/front:arm64${{ github.sha }}
+
